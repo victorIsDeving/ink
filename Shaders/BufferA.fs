@@ -9,7 +9,7 @@ uniform float iTime;
 uniform int iFrame;
 
 
-#define BRUSH_SIZE 8.0
+#define BRUSH_SIZE 10.0
 #define STROKE_LENGTH 300.0
 
 #define dt 0.20
@@ -23,14 +23,14 @@ float noise(vec2 p){
         u = u*u*(3.0-2.0*u);
 
         float res = mix(
-                mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),
-                mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),u.y);
+        mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),
+        mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),u.y);
         return res*res;
 }
 
 void main(  )
 {
-        vec2 uv = gl_FragCoord.xy/iResolution.xy;
+    vec2 uv = gl_FragCoord.xy/iResolution.xy;
 
     float brushStrength = texture(iChannel0, vec2(0.5, 0.0)).a;
 
@@ -43,35 +43,35 @@ void main(  )
     vec4 tu = texture(iChannel0, uv + vec2(0 , w.y), 0.0);
     vec4 td = texture(iChannel0, uv - vec2(0 , w.y), 0.0);
 
-        vec3 dx = (tr.xyz - tl.xyz)*0.5;
-        vec3 dy = (tu.xyz - td.xyz)*0.5;
-        vec2 densDif = vec2(dx.z ,dy.z);
+    vec3 dx = (tr.xyz - tl.xyz)*0.5;
+    vec3 dy = (tu.xyz - td.xyz)*0.5;
+    vec2 densDif = vec2(dx.z ,dy.z);
 
     const float K = 0.2;
-        const float v = 0.55;
+    const float v = 0.55;
 
     col.z -= dt*dot(vec3(densDif, dx.x + dy.y) ,col.xyz);
     vec2 laplacian = tu.xy + td.xy + tr.xy + tl.xy - 4.0*col.xy;
     vec2 viscForce = vec2(v)*laplacian;
     col.xyw = texture(iChannel0, uv - dt*col.xy*w, 0.).xyw;
 
-        vec2 oldBrushPos = vec2(texture(iChannel0, vec2(0.0, 0.5)).a,
-                                texture(iChannel0, vec2((iResolution.x-1)/iResolution.x, 0.5)).a);
+    vec2 oldBrushPos = vec2(texture(iChannel0, vec2(0.0, 0.5)).a,
+                            texture(iChannel0, vec2((iResolution.x-1)/iResolution.x, 0.5)).a);
 
-        vec4 brushData = texture(iChannel0, vec2(0.0));
-        //brushStrength=brushData.z;
+    vec4 brushData = texture(iChannel0, vec2(0.0));
+    //brushStrength=brushData.z;
 
-vec2 dirVec = normalize(iMouse.xy -  brushData.xy);
+    vec2 dirVec = normalize(iMouse.xy -  brushData.xy);
     vec4 brushColor = vec4(dirVec.x, dirVec.y, 0.0, 1.0);
-        float brushStregthRamp = clamp(sin(brushStrength*3.1415926), 0.0, 1.0);
-        float d;
-        float bd;
+    float brushStregthRamp = clamp(sin(brushStrength*3.1415926), 0.0, 1.0);
+    float d;
+    float bd;
 
     for(int i=0; i < BRUSH_SIZE; i++) {
         vec2 mPos = mix(iMouse.xy, brushData.xy, float(i)/STROKE_LENGTH);
-         d = 1.0 - smoothstep(0.0, 1.0, distance(gl_FragCoord.xy, mPos) / BRUSH_SIZE / brushStregthRamp);
+        d = 1.0 - smoothstep(0.0, 1.0, distance(gl_FragCoord.xy, mPos) / BRUSH_SIZE / brushStregthRamp);
         d *= smoothstep(0.2, 1.0, (noise(gl_FragCoord.xy-mPos)+0.75)/5.0) * 10.0;
-         bd = 1.0 - smoothstep(0.0, 1.0, distance(gl_FragCoord.xy, mPos) / BRUSH_SIZE / brushStregthRamp / 1.5);
+        bd = 1.0 - smoothstep(0.0, 1.0, distance(gl_FragCoord.xy, mPos) / BRUSH_SIZE / brushStregthRamp / 1.5);
         bd *= smoothstep(0.1, 1.0, (noise(vec2(brushStrength * 20.0, 0.0) + (gl_FragCoord.xy-mPos)/2.0)+0.0)/5.0) * 10.0;
         col = mix(col, brushColor, d + bd);
     }
@@ -89,7 +89,7 @@ vec2 dirVec = normalize(iMouse.xy -  brushData.xy);
     }
     brushStrength = clamp(brushStrength, 0.0, 1.0);
 
-   vec4 oldMouseXCol = vec4(col.xyz, iMouse.x);
+    vec4 oldMouseXCol = vec4(col.xyz, iMouse.x);
     vec4 oldMouseYCol = vec4(col.xyz, iMouse.y);
     vec4 brushStrengthCol = vec4(col.xyz, brushStrength);
     vec4 mouseClickCol = vec4(col.xyz, iMouse.z);
