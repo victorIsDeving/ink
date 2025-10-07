@@ -1,0 +1,6 @@
+# CMake files
+includes/
+proj_XCode/
+
+# MacOS cache
+.DS_Store

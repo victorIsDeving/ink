@@ -1,0 +1,3 @@
+/home/helton/SPH/LearnOpenGL/src/Shader/ink/build/CMakeFiles/ink.dir
+/home/helton/SPH/LearnOpenGL/src/Shader/ink/build/CMakeFiles/edit_cache.dir
+/home/helton/SPH/LearnOpenGL/src/Shader/ink/build/CMakeFiles/rebuild_cache.dir
