@@ -8,6 +8,7 @@ uniform vec4 iMouse;
 uniform float iTime;
 uniform int iFrame;
 
+// brush
 
 #define BRUSH_SIZE 10.0
 #define STROKE_LENGTH 300.0

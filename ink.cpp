@@ -138,7 +138,7 @@ int main()
     const char * commonPath = cString.c_str();
     Shader Imageprogram(commonPath,vertexShaderPath,fragmentShaderPath);
     Shader BufferAprogram(commonPath,vertexShaderPath,fragmentShaderAPath);
-//    Shader BufferBprogram(commonPath,vertexShaderPath,fragmentShaderBPath);
+    Shader BufferBprogram(commonPath,vertexShaderPath,fragmentShaderBPath);
 //    Shader BufferCprogram(commonPath,vertexShaderPath,fragmentShaderCPath);
 //    Shader BufferDprogram(commonPath,vertexShaderPath,fragmentShaderDPath);
     const char * commonPath1 = cString.c_str();
@@ -422,150 +422,74 @@ int main()
 //        int framebufferWidth, framebufferHeight;
 //        glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 //        glViewport(0, 0, framebufferWidth, framebufferHeight);
-//        
+//
 //        // Update resolution to match actual framebuffer
 //        glm::vec2 resolution(framebufferWidth, framebufferHeight);
         
-        if(shouldDraw)
+        // --- Ping-pong state ---
+        static bool pingA = false;
+        static bool pingB = false;
+
+        if (shouldDraw)
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, FBO_0);
-            
-            // make sure we clear the framebuffer's content
+            // Buffer A
+            unsigned int readTexA = pingB ? iChannel_3 : iChannel_2;
+            unsigned int writeFBO_A = pingA ? FBO_0 : FBO_1;
+            glBindFramebuffer(GL_FRAMEBUFFER, writeFBO_A);
+            glViewport(0,0,SCR_WIDTH,SCR_HEIGHT);
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
-            //glClear( GL_DEPTH_BUFFER_BIT);
-            //Utilização de um segundo shader para calcular vizinhança
+
             BufferAprogram.use();
-            BufferAprogram.setSampler("iChannel0",0);
-            //BufferAprogram.setSampler("iChannel1",1);
-            BufferAprogram.setVec2("iResolution",resolution) ;
+            BufferAprogram.setSampler("iChannel0", 0);
+            BufferAprogram.setVec2("iResolution", resolution);
             BufferAprogram.setVec4("iMouse", mouse);
-            BufferAprogram.setFloat("iTime",totalTime);
-            BufferAprogram.setInt("iFrame",frame);
-            glBindVertexArray(VAO);
+            BufferAprogram.setFloat("iTime", totalTime);
+            BufferAprogram.setInt("iFrame", frame);
+
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, iChannel_0);
-            //glActiveTexture(GL_TEXTURE1);
-            //glBindTexture(GL_TEXTURE_2D, iChannel_0);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-            //glBindVertexArray(0);
-            //  glUseProgram(0);
-            /* glBindFramebuffer(GL_FRAMEBUFFER, FBO_1);
-             
-             // make sure we clear the framebuffer's content
-             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-             //glClear(GL_DEPTH_BUFFER_BIT);
-             BufferBprogram.use();
-             BufferBprogram.setInt("iChannel0",0);
-             BufferBprogram.setInt("iChannel1",1);
-             BufferBprogram.setInt("iChannel2",2);
-             BufferBprogram.setInt("iChannel3",3);
-             BufferBprogram.setVec2("iResolution",resolution) ;
-             BufferBprogram.setVec4("iMouse", mouse);
-             BufferBprogram.setFloat("iTime",totalTime);
-             BufferBprogram.setInt("iFrame",frame);
-             glBindVertexArray(VAO);
-             glActiveTexture(GL_TEXTURE0);
-             glBindTexture(GL_TEXTURE_2D, iChannel_1);
-             glActiveTexture(GL_TEXTURE1);
-             glBindTexture(GL_TEXTURE_2D, iChannel_2);
-             glActiveTexture(GL_TEXTURE2);
-             glBindTexture(GL_TEXTURE_2D, iChannel_0);
-             glActiveTexture(GL_TEXTURE3);
-             glBindTexture(GL_TEXTURE_2D, imageTexture0);
-             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-             //glBindVertexArray(0);
-             //  glUseProgram(0);
-             
-             
-             
-             glBindFramebuffer(GL_FRAMEBUFFER, FBO_2);
-             // make sure we clear the framebuffer's content
-             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-             //glClear(GL_DEPTH_BUFFER_BIT);
-             BufferCprogram.use();
-             
-             BufferCprogram.setSampler("iChannel0",0);
-             BufferCprogram.setSampler("iChannel1",1);
-             // BufferCprogram.setSampler("iChannel2",2);
-             BufferCprogram.setVec2("iResolution",resolution) ;
-             BufferCprogram.setVec4("iMouse", mouse);
-             BufferCprogram.setFloat("iTime",totalTime);
-             BufferCprogram.setInt("iFrame",frame);
-             glBindVertexArray(VAO);
-             glActiveTexture(GL_TEXTURE0);
-             glBindTexture(GL_TEXTURE_2D, iChannel_1);
-             glActiveTexture(GL_TEXTURE1);
-             glBindTexture(GL_TEXTURE_2D, iChannel_2);
-             ///glActiveTexture(GL_TEXTURE2);
-             //glBindTexture(GL_TEXTURE_2D, iChannel_2);
-             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-             //glBindVertexArray(0);
-             //glUseProgram(0);
-             
-             
-             glBindFramebuffer(GL_FRAMEBUFFER, FBO_3);
-             // make sure we clear the framebuffer's content
-             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-             //glClear(GL_DEPTH_BUFFER_BIT);
-             BufferDprogram.use();
-             
-             BufferDprogram.setSampler("iChannel0",0);
-             BufferDprogram.setSampler("iChannel1",1);
-             
-             BufferDprogram.setVec2("iResolution",resolution) ;
-             BufferDprogram.setVec4("iMouse", mouse);
-             BufferDprogram.setFloat("iTime",currentTime);
-             BufferDprogram.setInt("iFrame",frame);
-             glBindVertexArray(VAO);
-             glActiveTexture(GL_TEXTURE0);
-             glBindTexture(GL_TEXTURE_2D, iChannel_0);
-             glActiveTexture(GL_TEXTURE1);
-             glBindTexture(GL_TEXTURE_2D, iChannel_3);
-             
-             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-             //glBindVertexArray(0);
-             //glUseProgram(0);*/
-        
-            //Renderizando para a tela
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            //glDisable(GL_DEPTH_TEST);
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glBindTexture(GL_TEXTURE_2D, readTexA);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            unsigned int justWrittenAtex = (writeFBO_A == FBO_0) ? iChannel_0 : iChannel_1;
+            pingA = !pingA; // swap A
+
+            // Buffer B
+            unsigned int writeFBO_B = pingB ? FBO_2 : FBO_3;
+            glBindFramebuffer(GL_FRAMEBUFFER, writeFBO_B);
+            glViewport(0,0,SCR_WIDTH,SCR_HEIGHT);
             glClear(GL_COLOR_BUFFER_BIT);
-            /*   TVShaderprogram.use();
-             TVShaderprogram.setFloat("iTime",currentTime);
-             DisplayFramebufferTexture(iChannel_1,&TVShaderprogram,TV_VAO,resolution);*/
-            
-            
-            Imageprogram.use();
-            
-            
-            glBindVertexArray(VAO);
-            Imageprogram.setVec2("iResolution",resolution) ;
-            Imageprogram.setSampler("iChannel0",0);
-            //Imageprogram.setSampler("iChannel1",1);
-            //Imageprogram.setSampler("iChannel2",2);
-            //Imageprogram.setSampler("iChannel3",3);
-            Imageprogram.setFloat("iTime",totalTime);
-            Imageprogram.setVec4("iMouse", mouse);
+
+            BufferBprogram.use();
+            BufferBprogram.setSampler("iChannel0", 0);
+            BufferBprogram.setVec2("iResolution", resolution);
+
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, iChannel_0);
-            //glActiveTexture(GL_TEXTURE1);
-            // glBindTexture(GL_TEXTURE_2D, iChannel_2);
-            //glActiveTexture(GL_TEXTURE2);
-            //glBindTexture(GL_TEXTURE_2D, imageTexture0);
-            //glActiveTexture(GL_TEXTURE3);
-            //glBindTexture(GL_TEXTURE_2D, iChannel_0);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-            //glBindVertexArray(0);
-            //glUseProgram(0);
+            glBindTexture(GL_TEXTURE_2D, justWrittenAtex);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            unsigned int justWrittenBtex = (writeFBO_B == FBO_2) ? iChannel_2 : iChannel_3;
+            pingB = !pingB; // swap B
+
+            // Final render
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+            Imageprogram.use();
+            Imageprogram.setVec2("iResolution", resolution);
+            Imageprogram.setSampler("iChannel0", 0);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, justWrittenBtex);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             
             double CurrentTime = glfwGetTime();
             double past = CurrentTime - lt;
             totalTime = CurrentTime-iniTime;
             if(past>0.1) {
                 fps = (float)nbFrames/past;
-                sprintf(title_string, "Flythrough - FPS = %.i ", (int)fps);
+                sprintf(title_string, "Inking - FPS = %.i ", (int)fps);
                 glfwSetWindowTitle(window, title_string);
                 lt+=past;
                 nbFrames = 0;
@@ -573,6 +497,7 @@ int main()
             nbFrames++;
             frame++;
         }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
 
