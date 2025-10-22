@@ -17,7 +17,8 @@ void main() {
     float d = texture(iChannel0, uv - vec2(0, w.y)).a;
 
     float laplacian = (l + r + u + d - 4.0 * c);
-    float diffused = c + DIFFUSION_RATE * laplacian;
+    float diffCoeff = DIFFUSION_RATE * (1.0 - c);
+    float diffused = c + diffCoeff * laplacian;
 
     diffused = clamp(diffused, 0.0, 1.0);
 
