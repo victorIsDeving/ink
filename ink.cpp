@@ -493,6 +493,7 @@ int main()
     // --- Ping-pong state ---
     static bool pingA = false;
     static bool pingB = false;
+    static bool pingC = false;
     
     ////////////////////
     //  RENDER LOOP   //
@@ -538,6 +539,27 @@ int main()
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             unsigned int justWrittenAtex = (writeFBO_A == FBO_0) ? iChannel_0 : iChannel_1;
             pingA = !pingA; // swap A
+            
+            // --- Buffer C
+            unsigned int writeFBO_C = pingC ? FBO_4 : FBO_5;
+            glBindFramebuffer(GL_FRAMEBUFFER, writeFBO_C);
+            glViewport(0,0,SCR_WIDTH,SCR_HEIGHT);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            BufferCprogram.use();
+            BufferCprogram.setSampler("iChannel0", 0);
+            BufferCprogram.setSampler("iChannel1", 1);
+            BufferCprogram.setVec2("iResolution", resolution);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, justWrittenAtex);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, pingC ? iChannel_5 : iChannel_4);
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            unsigned int justWrittenCtex = (writeFBO_C == FBO_4) ? iChannel_4 : iChannel_5;
+            pingC = !pingC;
 
             // Buffer B
             unsigned int writeFBO_B = pingB ? FBO_2 : FBO_3;
@@ -547,10 +569,13 @@ int main()
 
             BufferBprogram.use();
             BufferBprogram.setSampler("iChannel0", 0);
+            BufferBprogram.setSampler("iChannel1", 1);
             BufferBprogram.setVec2("iResolution", resolution);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, justWrittenAtex);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, justWrittenCtex);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             unsigned int justWrittenBtex = (writeFBO_B == FBO_2) ? iChannel_2 : iChannel_3;
@@ -595,10 +620,14 @@ int main()
     glDeleteFramebuffers(1, &FBO_1);
     glDeleteFramebuffers(1, &FBO_2);
     glDeleteFramebuffers(1, &FBO_3);
+    glDeleteFramebuffers(1, &FBO_4);
+    glDeleteFramebuffers(1, &FBO_5);
     glDeleteRenderbuffers(1, &rbo_0);
     glDeleteRenderbuffers(1, &rbo_1);
     glDeleteRenderbuffers(1, &rbo_2);
     glDeleteRenderbuffers(1, &rbo_3);
+    glDeleteRenderbuffers(1, &rbo_4);
+    glDeleteRenderbuffers(1, &rbo_5);
 
     glfwTerminate();
     return 0;
