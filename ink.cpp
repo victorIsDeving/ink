@@ -405,6 +405,11 @@ int main()
     bool press = false;
     float currentTime;
     int frame=0;
+    
+    // --- Ping-pong state ---
+    static bool pingA = false;
+    static bool pingB = false;
+    
     ////////////////////
     //  RENDER LOOP   //
     ////////////////////
@@ -425,10 +430,6 @@ int main()
 //
 //        // Update resolution to match actual framebuffer
 //        glm::vec2 resolution(framebufferWidth, framebufferHeight);
-        
-        // --- Ping-pong state ---
-        static bool pingA = false;
-        static bool pingB = false;
 
         if (shouldDraw)
         {
