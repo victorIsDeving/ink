@@ -139,7 +139,7 @@ int main()
     Shader Imageprogram(commonPath,vertexShaderPath,fragmentShaderPath);
     Shader BufferAprogram(commonPath,vertexShaderPath,fragmentShaderAPath);
     Shader BufferBprogram(commonPath,vertexShaderPath,fragmentShaderBPath);
-//    Shader BufferCprogram(commonPath,vertexShaderPath,fragmentShaderCPath);
+    Shader BufferCprogram(commonPath,vertexShaderPath,fragmentShaderCPath);
 //    Shader BufferDprogram(commonPath,vertexShaderPath,fragmentShaderDPath);
     const char * commonPath1 = cString.c_str();
     Shader TVShaderprogram(commonPath1,TVvertexShaderPath,TVShaderPath);
@@ -376,6 +376,90 @@ int main()
     glBindRenderbuffer(GL_RENDERBUFFER, rbo_3);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo_3); // now actually attach it
+    //now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    
+    //Criando o framebuffer
+    unsigned int FBO_4;
+    glGenFramebuffers(1, &FBO_4);
+    //Ligando o framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER,FBO_4);
+
+    unsigned int iChannel_4;
+
+    glGenTextures(1, &iChannel_4);
+    glBindTexture(GL_TEXTURE_2D, iChannel_4);
+
+    //Gerando uma textura vazia para ligar ao framebuffer
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    //LIGANDO A TEXTURA AO FRAMBUFFER
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, iChannel_4, 0 );
+
+    //create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    unsigned int rbo_4;
+    glGenRenderbuffers(1, &rbo_4);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo_4);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo_4); // now actually attach it
+    //now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    
+    //Criando o framebuffer
+    unsigned int FBO_5;
+    glGenFramebuffers(1, &FBO_5);
+    //Ligando o framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER,FBO_5);
+
+    unsigned int iChannel_5;
+
+    glGenTextures(1, &iChannel_5);
+    glBindTexture(GL_TEXTURE_2D, iChannel_5);
+
+    //Gerando uma textura vazia para ligar ao framebuffer
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    //LIGANDO A TEXTURA AO FRAMBUFFER
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, iChannel_5, 0 );
+
+    //create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    unsigned int rbo_5;
+    glGenRenderbuffers(1, &rbo_5);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo_5);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo_5); // now actually attach it
     //now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
 
 
